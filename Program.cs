@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.Text.Json;
 using System.Text;
 
 namespace oop_8
 {
     // ---------------------------------------------------------- классы из 5 лабы 
-
     abstract class Tech
     {
         protected bool isRunning;
@@ -20,7 +20,6 @@ namespace oop_8
             isRunning = true;
             return true;
         }
-
         public bool TurnOff()
         {
             isRunning = false;
@@ -132,6 +131,29 @@ namespace oop_8
             }
         }
 
+        // сериализация
+        public static void Serialize(Set<T> set, string path = "oop-8.json")
+        {
+            using (var sw = new StreamWriter(path, false, System.Text.Encoding.Default))
+            {
+                var buff = JsonSerializer.Serialize<List<T>>(set._data);
+                Console.WriteLine("Строчка:" + buff );
+                sw.Write(buff);
+            }      
+        }
+
+        public static Set<T> Dezerialize (string path = "oop-8.json")
+        {
+            using (var sr = new StreamReader(path, System.Text.Encoding.Default))
+            {
+                var buff = sr.ReadToEnd();
+                var list = JsonSerializer.Deserialize<List<T>>(buff);
+                var obj = new Set<T> { };
+                obj._data = list;
+                return obj;
+            }
+        }
+
         // добавление во множество
         public bool Add(T element)
         {
@@ -142,7 +164,7 @@ namespace oop_8
             _data.Add(element);
             return true;
         }
-
+        // удаление из множества
         public bool Delete(T element)
         {
             if (_data.Remove(element))
@@ -152,7 +174,7 @@ namespace oop_8
             else
                 throw new SetDeleteException("Ошибка удаления: такого элемента во множестве не существует");
         }
-
+        // просмотр элемента
         public T Watch(int i)
         {
             if (i > _data.Count)
@@ -204,7 +226,6 @@ namespace oop_8
             return !set1.Equals(set2);
         }
 
-
         // переопределение методов object
         public override int GetHashCode()
         {
@@ -240,7 +261,6 @@ namespace oop_8
         {
             
             var first = new Set<int> { };
-            var second = new Set<Scaner> { };
 
             for (int i = 0; i < 15; i++)
             {
@@ -280,6 +300,7 @@ namespace oop_8
 
 
 
+            var second = new Set<Scaner> { };
 
 
             for (int i = 0; i < 3; i++)
@@ -297,6 +318,7 @@ namespace oop_8
                     Console.WriteLine(e.Message);
                 }
             }
+
             var scan = new Scaner();
             var scan1 = new Scaner();
             scan.TurnOn();
@@ -335,28 +357,11 @@ namespace oop_8
 
 
 
-            /*if (first.Add(2)) { Console.WriteLine("Вставка удалась"); } else { Console.WriteLine("Не вставлено"); }
-            if (first.Add(2)) { Console.WriteLine("Вставка удалась"); } else { Console.WriteLine("Не вставлено"); }
-            if (first.Add(3)) { Console.WriteLine("Вставка удалась"); } else { Console.WriteLine("Не вставлено"); }
-            if (first.Add(4)) { Console.WriteLine("Вставка удалась"); } else { Console.WriteLine("Не вставлено"); }
-            if (first.Add(6)) { Console.WriteLine("Вставка удалась"); } else { Console.WriteLine("Не вставлено"); }
-            if (first.Add(5)) { Console.WriteLine("Вставка удалась"); } else { Console.WriteLine("Не вставлено"); }
-            */
-            /*            Set second = new Set();
-                        if (second << 10) { Console.WriteLine("Вставка удалась"); } else { Console.WriteLine("Не вставлено"); }
-                        if (second << 2) { Console.WriteLine("Вставка удалась"); } else { Console.WriteLine("Не вставлено"); }
-                        if (second << 56) { Console.WriteLine("Вставка удалась"); } else { Console.WriteLine("Не вставлено"); }
-                        if (second << 5) { Console.WriteLine("Вставка удалась"); } else { Console.WriteLine("Не вставлено"); }
-                        if (second << 6) { Console.WriteLine("Вставка удалась"); } else { Console.WriteLine("Не вставлено"); }
-                        Console.WriteLine("Второе множество: " + second.ToString());
-                        Console.WriteLine("Упорядоченный вариант: " + (second.OrderBy()).ToString());
-                        Console.WriteLine("Содержится ли второе множество в первом? " + (second < first));
 
-                        Set third = first % second;
-                        Console.WriteLine("Третье множество -- пересечение первых двух: " + third.ToString());
-                        Console.WriteLine("Содержится ли пересечение двух множеств в первом? " + (third < first));
-                        Console.WriteLine("Равняется ли пересечение двух множеств третьему множеству? " + (third == first % second));
-                        Console.WriteLine("Верно ли, что третье множество не равняется первому? " + (third != first));*/
+            Set<int>.Serialize(first);
+            var third = Set<int>.Dezerialize();
+
+            Console.WriteLine("" + third.ToString());
         }
     }
 }
