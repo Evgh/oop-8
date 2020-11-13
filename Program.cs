@@ -134,23 +134,38 @@ namespace oop_8
         // сериализация
         public static void Serialize(Set<T> set, string path = "oop-8.json")
         {
-            using (var sw = new StreamWriter(path, false, System.Text.Encoding.Default))
+            try
             {
-                var buff = JsonSerializer.Serialize<List<T>>(set._data);
-                Console.WriteLine("Строчка:" + buff );
-                sw.Write(buff);
-            }      
+                using (var sw = new StreamWriter(path, false, System.Text.Encoding.Default))
+                {
+                    var buff = JsonSerializer.Serialize<List<T>>(set._data);
+                    Console.WriteLine("Строчка:" + buff);
+                    sw.Write(buff);
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         public static Set<T> Dezerialize (string path = "oop-8.json")
         {
-            using (var sr = new StreamReader(path, System.Text.Encoding.Default))
+            try
             {
-                var buff = sr.ReadToEnd();
-                var list = JsonSerializer.Deserialize<List<T>>(buff);
-                var obj = new Set<T> { };
-                obj._data = list;
-                return obj;
+                using (var sr = new StreamReader(path, System.Text.Encoding.Default))
+                {
+                    var buff = sr.ReadToEnd();
+                    var list = JsonSerializer.Deserialize<List<T>>(buff);
+                    var obj = new Set<T> { };
+                    obj._data = list;
+                    return obj;
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
             }
         }
 
